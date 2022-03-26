@@ -3,4 +3,4 @@
 # COVID-19 PandeMap 🦠
 
 Here you can find the Sourcecode for our Streamlit COVID-19 App! 
-This project was created by Catherina, Enrico, Greshma & Patrick
+This project was created by Caterina, Enrico, Greshma & Patrick
