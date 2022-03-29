@@ -236,7 +236,11 @@ fig
 
 
 
-st.write(emoji.emojize("""## GDP :moneybag: vs Infant Mortality :baby_bottle: & COVID-19 :microbe:"""))
+
+
+
+st.write(emoji.emojize("""## :microbe: Dynamic World Map & GDP vs Infant Mortality Index :microbe:"""))
+
 st.write("""This section features the lates COVID-19 data from a global and economical perspective: the first visalisation will provide a 
 overview of the evlution of Covid cases across the globe, whil the second one will compare the GDP vs Infant Mortality index, an insightful index for the health status of a country, to the number of
 Covid cases in that country.""")
@@ -248,9 +252,9 @@ import plotly.express as px
 import pandas as pd
 import math
 
-st.write("""### COVID-19 Dynamic World Map""")
+st.write("""#### World COVID-19 Cases - Evolution Over Time :earth_africa: """)
 
-st.write("""#### The dataset used:""")
+st.write("""##### The dataset used:""")
 df = pd.read_csv('cases_evolution.csv', index_col=0)
 df
 
@@ -262,18 +266,31 @@ fig_1 = px.scatter_geo(
     hover_name='country',
     size='cases',
     projection="natural earth",
-    title=f'World COVID-19 Cases - Evolution Over Time',
     animation_frame="date"
 )
 
 st.plotly_chart(fig_1)
 
 
-st.write("""### GDP vs Infant Mortality & Total Cases""")
+st.write("""#### GDP :moneybag: vs Infant Mortality  :baby_bottle: & Total Cases""")
 
-st.write("""#### The dataset used:""")
+st.write("""##### The dataset used:""")
 # Importing GDP vs Infant mortality dataframe
 data = pd.read_csv('data_gdp.csv', index_col=0)
 data
 
 # Plot 2
+bubble_fig = px.scatter(data, x='Infant mortality (per 1000 births)', 
+                                y='GDP ($ per capita)', 
+                                color='Continent', 
+                                size='Tot number of cases', 
+                                log_x=True, 
+                                hover_name="Country",  
+                                hover_data=['GDP ($ per capita)', 'Infant mortality (per 1000 births)'],
+                                size_max=70)
+
+                                
+#bubble_fig.update_layout(hovermode='closest')
+st.plotly_chart(bubble_fig)
+# hovertemplaye=None
+# hovermode="x unified"
