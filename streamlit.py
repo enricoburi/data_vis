@@ -9,6 +9,10 @@ from matplotlib.figure import Figure
 from datetime import datetime
 from datetimerange import DateTimeRange
 import seaborn as sns
+import plotly.io as pio
+import plotly.graph_objects as go
+import plotly.express as px
+import math
 
 linkedinlink = '[Github](https://github.com/patrickld/data_vis/)'
 
@@ -38,50 +42,49 @@ def date_change(date_str):
 
 data["date"] = data["date"].apply(date_change)
 
+variants=data['variant_grouped'].unique()
+variants=variants[variants!='non-who']
+locations=data['Country'].unique()
 chosen_variants = data.groupby('variant_grouped')['num_sequences'].sum().sort_values(ascending=False)[:5]
 
 
 #Create and name sidebar
 st.sidebar.header('Filter the Graphs')
 #st.sidebar.write("""#### Choose your SG bias""")
+variants=data['variant_grouped'].unique()
+variants=variants[variants!='non-who']
+locations=data['Country'].unique()
+country_list = sorted(set(data["Country"]))
+country_list.insert(0,'All')
+sorted(country_list)
 
 def user_input_features():
     time_1,time_2 = st.sidebar.date_input("Choose a Range in Time:", value = (data.date.min(),data.date.max()), min_value =data.date.min(), max_value=data.date.max())
-    variant_filter = st.sidebar.select_slider('Variant', chosen_variants.keys())
-    #                           multiselect
-    country_filter = st.sidebar.selectbox("Select a region:", sorted(set(data["Country"])))
+    variant_filter = st.sidebar.multiselect('Variant', variants,variants)
+    country_filter = st.sidebar.selectbox("Select a region:", country_list)
     return time_1, time_2, variant_filter,country_filter
 
 time_1, time_2, variant_filter,country_filter = user_input_features()
 
-#time_range = DateTimeRange(time_1, time_2)
-data[(data.Country == country_filter) & (data.variant_grouped == variant_filter) & (time_1<=data.date) & (time_2>=data.date)]
-
 if st.sidebar.checkbox("Display all Data"):
-    def user_input_biased():
-        thisyear = st.sidebar.slider('2021 weighting', 0, 100, 100, 5)
-        lastyear = st.sidebar.slider('2020 weighting', 0, 100, 80, 5)
-        biased_data = {'this year': thisyear/100,
-                       'last year': lastyear/100}
-        biased = pd.DataFrame(biased_data, index=[0])
-        return biased
-
-
-    df_user_biased = user_input_biased()
-
+    data1=data
+    all_data_textbox = True
 else:
-    def user_input_biased():
-        thisyear = 100
-        lastyear = 60
-        biased_data = {'this year': thisyear / 100,
-                       'last year': lastyear / 100}
-        biased = pd.DataFrame(biased_data, index=[0])
-        return biased
-    df_user_biased = user_input_biased()
+    data1 = data[(data.variant_grouped.isin(variant_filter)) & (time_1<=data.date) & (time_2>=data.date)]
+    all_data_textbox = False
+    if country_filter == 'All':
+        data1=data1
+    else:
+        data1 = data[data.Country == country_filter]
+
+    data1
 
 
 st.write("## Chosen Filters: ")
-time_1, time_2, variant_filter,country_filter
+if all_data_textbox == True:
+    st.write("All Data is chosen")
+else:
+    time_1, time_2, variant_filter,country_filter
 
 #Output rankings based on users selections
 st.write(
@@ -94,8 +97,8 @@ def results_output():
 
     fig = Figure()
     ax = fig.subplots()
-    sns.barplot(x=data.groupby('variant_grouped')['num_sequences'].sum().sort_values(ascending=False)[:5],
-                y=data.groupby('variant_grouped')['num_sequences'].sum().sort_values(ascending=False)[:5].keys(), color='blue', ax=ax)
+    sns.barplot(x=data1.groupby('variant_grouped')['num_sequences'].sum().sort_values(ascending=False)[:5],
+                y=data1.groupby('variant_grouped')['num_sequences'].sum().sort_values(ascending=False)[:5].keys(), color='blue', ax=ax)
     ax.set_xlabel('# of Occurances')
     ax.set_ylabel('Variants')
     st.pyplot(fig)
@@ -124,12 +127,12 @@ for iter,rows in df2.iterrows():
 df2['Total']=array
 TOTAL=df2['Total']
 
-TOTAL_MAX = np.max(TOTAL)
-TOTAL_MIN = np.min(TOTAL)
+TIME_MAX = np.max(TOTAL)
+TIME_MIN = np.min(TOTAL)
 
 # 'low' and 'high' refer to the final dot size.
-def scale_to_interval(x, low=10, high=100):
-    return ((x - TOTAL_MIN) / (TOTAL_MAX - TOTAL_MIN)) * (high - low) + low
+def scale_to_interval(x, low=100, high=1000):
+    return ((x - TIME_MIN) / (TIME_MAX - TIME_MIN)) * (high - low) + low
 
 if time_1.year == 2021:
     NEW=['January','February','March','April', 'May','June', 'July','August', 'September','October','November','December'  ]
@@ -152,6 +155,9 @@ ANGLES = np.linspace(0, 2 * np.pi, len(df2), endpoint=False)
 # Heights of the lines and y-position of the dot are given by the times.
 HEIGHTS = np.array(array)
 
+# Category values for the colors
+CATEGORY_CODES = pd.Categorical(df2.index).codes
+
 # Colormap taken from https://carto.com/carto-colors/
 COLORMAP = ["#5F4690", "#1D6996", "#38A6A5", "#0F8554", "#73AF48",
             "#EDAD08", "#E17C05", "#CC503E", "#94346E", "#666666"]
@@ -161,7 +167,8 @@ COLORMAP = ["#5F4690", "#1D6996", "#38A6A5", "#0F8554", "#73AF48",
 
 
 # This is going to be helpful to create some space for labels within the circle
-PLUS = 1000
+# Don't worry if it doesn't make much sense yet, you're going to see it in action below
+PLUS = 200
 
 fig, ax = plt.subplots(figsize=(8,8), subplot_kw={"projection": "polar"})
 
@@ -214,7 +221,9 @@ ax.set_xticks([])
 ax.set_yticklabels([])
 
 HANGLES = np.linspace(0, 2 * np.pi, 200)
-ax.plot(HANGLES, np.repeat(1 * 24 * 60 + PLUS, 200), color= GREY88, lw=0.7)
+#ax.plot(HANGLES, np.repeat(1 * 24 * 60 + PLUS, 200), color= GREY88, lw=0.7)
+# Add our custom grid lines for the radial axis.
+# These lines indicate one day, one week, one month and one year.
 
 for angle, height, label in zip(ANGLES, HEIGHTS, df2.index):
   rotation = np.rad2deg(angle)
@@ -234,6 +243,7 @@ for angle, height, label in zip(ANGLES, HEIGHTS, df2.index):
         #rotation_mode="anchor")
 
 
+# If you have a look at the beginning of this post, you'll see the inner circle is not white.
 # This fill creates the effect of a very light grey background.
 ax.fill(HANGLES, np.repeat(PLUS, 200), GREY97)
 
@@ -248,5 +258,145 @@ ax.text(
 )
 
 
-
 fig
+
+
+
+
+
+st.write("""#### Cases by Variant Over Time  :chart_with_upwards_trend: """)
+
+# ------ Buri's graphs
+
+# Disable default datapoints limit in Altair
+alt.data_transformers.disable_max_rows()
+
+def graph2(data):
+  '''
+  Expects data.csv or its subsets as input
+  Returns the graph showing cumulative cases by variant over time
+  '''
+
+  # Data manipulation: cumulative counts of cases by date and variant
+  cumsum_variant = data.groupby(["variant_grouped", "date"])["num_sequences"].sum().groupby(level=0).cumsum().reset_index()
+  cumsum_variant.columns = ["Variant", "date", "Cumulative Cases"]
+
+  # Define interaction
+  click = alt.selection_single(encodings=['color'], on="mouseover")
+
+  # Create plot
+  graph = alt.Chart(cumsum_variant).mark_area(
+      opacity=0.7,
+      interpolate='basis',
+      line=True).properties(
+      title='Cumulative Cases by Variant over time').encode(
+      x=alt.X("date:T",
+          title=None),
+      y=alt.Y("Cumulative Cases:Q"),
+      color=alt.Color('Variant:N',
+          scale=alt.Scale(scheme='category20c')),
+      tooltip = [alt.Tooltip('Variant:N')],
+      opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
+  ).add_selection(
+      click
+  )
+
+  return graph
+
+
+st.altair_chart(graph2(data1))
+
+
+
+# -----
+
+
+def graph3(data):
+  '''
+  Expects data.csv or its subsets as input
+  Returns the graph showing cumulative cases by variant over time
+  '''
+
+  # Data manipulation: cumulative counts of cases by date and variant
+  sum_variant = data.groupby(["variant_grouped", "date"])["num_sequences"].sum().reset_index()
+  sum_variant.columns = ["Variant", "date", "Cases"]
+
+  # Define interaction
+  click = alt.selection_single(encodings=['color'], on="mouseover")
+
+  # Create plot
+  graph = alt.Chart(sum_variant).mark_area(
+    opacity=0.7,
+    interpolate='basis',
+    line=True).properties(
+    title='Cases by Variant over time').encode(
+    x=alt.X("date:T", title=None),
+    y=alt.Y("Cases:Q", stack=None),
+    color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c')),
+    tooltip = [alt.Tooltip('Variant:N')],
+    opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
+  ).add_selection(
+    click
+  )
+
+  return graph
+
+st.altair_chart(graph3(data1))
+
+
+# -----
+
+
+
+
+st.write(emoji.emojize("""## :microbe: Dynamic World Map & GDP vs Infant Mortality Index :microbe:"""))
+
+st.write("""This section features the lates COVID-19 data from a global and economical perspective: the first visalisation will provide a
+overview of the evlution of Covid cases across the globe, whil the second one will compare the GDP vs Infant Mortality index, an insightful index for the health status of a country, to the number of
+Covid cases in that country.""")
+
+# Importing first plot
+st.write("""#### World COVID-19 Cases - Evolution Over Time :earth_africa: """)
+
+st.write("""##### The dataset used:""")
+df = pd.read_csv('cases_evolution.csv', index_col=0)
+df
+
+
+
+fig_1 = px.scatter_geo(
+    df,
+    locations='countryCode',
+    color='continent',
+    hover_name='country',
+    projection='orthographic',
+    size='cases',
+    title=f'World COVID-19 Cases - Evolution Over Time',
+    animation_frame="date"
+)
+
+st.plotly_chart(fig_1)
+
+
+st.write("""#### GDP :moneybag: vs Infant Mortality  :baby_bottle: & Total Cases""")
+
+st.write("""##### The dataset used:""")
+# Importing GDP vs Infant mortality dataframe
+data = pd.read_csv('data_gdp.csv', index_col=0)
+data
+
+# Plot 2
+bubble_fig = px.scatter(data, x='Infant mortality (per 1000 births)',
+                                y='GDP ($ per capita)',
+                                color='Continent',
+                                size='Tot number of cases',
+                                log_x=True,
+                                hover_name="Country",
+                                hover_data=['GDP ($ per capita)', 'Infant mortality (per 1000 births)'],
+                                size_max=70)
+
+
+#bubble_fig.update_layout(hovermode='closest')
+st.plotly_chart(bubble_fig)
+# hovertemplaye=None
+# hovermode="x unified"
