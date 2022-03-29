@@ -1,0 +1,117 @@
+,Country,Continent,Infant mortality (per 1000 births),GDP ($ per capita),Tot number of cases
+0,Angola,Africa,191.19,1900.0,16880
+1,Argentina,South America,15.18,11200.0,134576
+2,Aruba,North America,5.89,28000.0,48000
+3,Australia,Oceania,4.69,29000.0,755184
+4,Austria,Europe,4.66,30000.0,201280
+5,Bahrain,Asia,17.27,16900.0,35872
+6,Bangladesh,Asia,62.6,1900.0,59152
+7,Belgium,Europe,4.68,29100.0,1199488
+8,Belize,North America,25.69,4900.0,5024
+9,Benin,Africa,85.0,1100.0,12000
+10,Bosnia and Herzegovina,Europe,21.05,6100.0,15872
+11,Botswana,Africa,54.58,9000.0,35200
+12,Brazil,South America,29.61,7600.0,1440320
+13,Brunei,Asia,12.61,18600.0,5296
+14,Bulgaria,Europe,20.55,7600.0,163744
+15,Cambodia,Asia,71.48,1900.0,31648
+16,Cameroon,Africa,68.26,1800.0,8576
+17,Canada,North America,4.75,29800.0,2910160
+18,Chile,South America,8.8,9900.0,278960
+19,Colombia,South America,20.97,6300.0,164560
+20,Costa Rica,North America,9.95,9100.0,34448
+21,Croatia,Europe,6.84,10600.0,217104
+22,Cyprus,Europe,7.18,19200.0,9440
+23,Czechia,Europe,3.93,15700.0,325552
+24,Denmark,Europe,4.56,31100.0,4485920
+25,Djibouti,Africa,104.13,1300.0,5872
+26,Dominican Republic,North America,32.38,6000.0,9040
+27,Ecuador,South America,23.66,3300.0,56368
+28,Egypt,Africa,32.59,4000.0,21360
+29,Estonia,Europe,7.87,12300.0,128672
+30,Ethiopia,Africa,95.32,700.0,8352
+31,Fiji,Oceania,12.62,5800.0,8400
+32,Finland,Europe,3.57,27400.0,357760
+33,France,Europe,4.26,27600.0,2399984
+34,Gambia,Africa,72.02,1700.0,13808
+35,Georgia,Asia,18.59,2500.0,13440
+36,Germany,Europe,4.16,27600.0,5234288
+37,Ghana,Africa,51.43,2200.0,37488
+38,Greece,Europe,5.53,20000.0,195264
+39,Guatemala,North America,35.93,4100.0,23184
+40,Hong Kong,Asia,2.97,28800.0,40304
+41,Hungary,Europe,8.57,13900.0,5216
+42,Iceland,Europe,3.31,30900.0,132384
+43,India,Asia,56.29,2900.0,1456448
+44,Indonesia,Asia,35.6,3200.0,182576
+45,Iran,Asia,41.58,7000.0,5904
+46,Iraq,Asia,50.25,1500.0,2672
+47,Ireland,Europe,5.39,29600.0,726848
+48,Israel,Asia,7.03,19800.0,575952
+49,Italy,Europe,5.94,26700.0,1273888
+50,Jamaica,North America,12.36,3900.0,5856
+51,Japan,Asia,3.26,28200.0,2845424
+52,Jordan,Asia,17.35,4300.0,19024
+53,Kazakhstan,Asia,29.21,6300.0,6864
+54,Kenya,Africa,61.47,1000.0,84752
+55,Kuwait,Asia,9.95,19000.0,5248
+56,Latvia,Europe,9.55,10200.0,100640
+57,Lebanon,Asia,24.52,4800.0,16144
+58,Liechtenstein,Europe,4.7,25000.0,7376
+59,Lithuania,Europe,6.89,11400.0,406128
+60,Luxembourg,Europe,4.81,55100.0,303504
+61,Madagascar,Africa,76.83,800.0,12352
+62,Malawi,Africa,103.32,600.0,12976
+63,Malaysia,Asia,17.7,9000.0,115872
+64,Maldives,Asia,56.52,3900.0,13840
+65,Malta,Europe,3.89,17700.0,9648
+66,Mauritius,Africa,15.03,11400.0,7488
+67,Mexico,North America,20.91,9000.0,685152
+68,Moldova,Europe,40.42,1800.0,2432
+69,Monaco,Europe,5.43,27000.0,1344
+70,Mongolia,Asia,53.79,1800.0,2400
+71,Morocco,Africa,41.62,4000.0,6400
+72,Mozambique,Africa,130.79,1200.0,14832
+73,Nepal,Asia,66.98,1400.0,5888
+74,Netherlands,Europe,5.04,28600.0,1323552
+75,New Zealand,Oceania,5.85,21600.0,75968
+76,Nigeria,Africa,98.8,900.0,58784
+77,Norway,Europe,3.7,37800.0,602528
+78,Oman,Asia,19.51,13100.0,7136
+79,Pakistan,Asia,72.44,2100.0,25056
+80,Papua New Guinea,Oceania,51.45,2200.0,53856
+81,Paraguay,South America,25.63,4700.0,14064
+82,Peru,South America,31.94,5100.0,195360
+83,Philippines,Asia,23.51,4600.0,203808
+84,Poland,Europe,8.51,11100.0,628160
+85,Portugal,Europe,5.05,18000.0,366272
+86,Qatar,Asia,18.61,21500.0,64752
+87,Romania,Europe,26.43,7000.0,137056
+88,Russia,Europe,15.39,8900.0,184624
+89,Rwanda,Africa,91.23,1300.0,11024
+90,Senegal,Africa,55.51,1600.0,11120
+91,Serbia,Europe,12.89,2200.0,22896
+92,Seychelles,Africa,15.53,7800.0,8688
+93,Singapore,Asia,2.29,23700.0,165168
+94,Slovakia,Europe,7.41,13300.0,282368
+95,Slovenia,Europe,4.45,19000.0,698816
+96,South Africa,Africa,61.81,10700.0,415776
+97,South Korea,Asia,7.05,17800.0,332768
+98,Spain,Europe,4.42,22000.0,1251824
+99,Sri Lanka,Asia,14.35,3700.0,37488
+100,Suriname,South America,23.57,4000.0,14896
+101,Sweden,Europe,2.77,26800.0,2205664
+102,Switzerland,Europe,4.39,32700.0,1594672
+103,Thailand,Asia,20.48,7400.0,144288
+104,Togo,Africa,66.61,1500.0,5408
+105,Trinidad and Tobago,North America,24.31,9500.0,22976
+106,Turkey,Asia,41.04,6700.0,1229728
+107,Uganda,Africa,67.83,1400.0,12720
+108,Ukraine,Europe,20.34,5400.0,9824
+109,United Arab Emirates,Asia,14.51,23200.0,39840
+110,United Kingdom,Europe,5.16,27700.0,24942720
+111,United States,North America,6.5,37800.0,33306272
+112,Uruguay,South America,11.95,12800.0,10912
+113,Vietnam,Asia,25.95,2500.0,28880
+114,Zambia,Africa,88.29,800.0,17872
+115,Zimbabwe,Africa,67.69,1900.0,10976
