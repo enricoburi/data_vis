@@ -124,12 +124,12 @@ for iter,rows in df2.iterrows():
 df2['Total']=array
 TOTAL=df2['Total']
 
-TIME_MAX = np.max(TOTAL)
-TIME_MIN = np.min(TOTAL)
+TOTAL_MAX = np.max(TOTAL)
+TOTAL_MIN = np.min(TOTAL)
 
 # 'low' and 'high' refer to the final dot size.
-def scale_to_interval(x, low=100, high=1000):
-    return ((x - TIME_MIN) / (TIME_MAX - TIME_MIN)) * (high - low) + low
+def scale_to_interval(x, low=10, high=100):
+    return ((x - TOTAL_MIN) / (TOTAL_MAX - TOTAL_MIN)) * (high - low) + low
 
 if time_1.year == 2021:
     NEW=['January','February','March','April', 'May','June', 'July','August', 'September','October','November','December'  ]
@@ -152,9 +152,6 @@ ANGLES = np.linspace(0, 2 * np.pi, len(df2), endpoint=False)
 # Heights of the lines and y-position of the dot are given by the times.
 HEIGHTS = np.array(array)
 
-# Category values for the colors
-CATEGORY_CODES = pd.Categorical(df2.index).codes
-
 # Colormap taken from https://carto.com/carto-colors/
 COLORMAP = ["#5F4690", "#1D6996", "#38A6A5", "#0F8554", "#73AF48",
             "#EDAD08", "#E17C05", "#CC503E", "#94346E", "#666666"]
@@ -164,7 +161,7 @@ COLORMAP = ["#5F4690", "#1D6996", "#38A6A5", "#0F8554", "#73AF48",
 
 
 # This is going to be helpful to create some space for labels within the circle
-PLUS = 200
+PLUS = 1000
 
 fig, ax = plt.subplots(figsize=(8,8), subplot_kw={"projection": "polar"})
 
@@ -217,7 +214,7 @@ ax.set_xticks([])
 ax.set_yticklabels([])
 
 HANGLES = np.linspace(0, 2 * np.pi, 200)
-
+ax.plot(HANGLES, np.repeat(1 * 24 * 60 + PLUS, 200), color= GREY88, lw=0.7)
 
 for angle, height, label in zip(ANGLES, HEIGHTS, df2.index):
   rotation = np.rad2deg(angle)
