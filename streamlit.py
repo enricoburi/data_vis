@@ -164,7 +164,6 @@ COLORMAP = ["#5F4690", "#1D6996", "#38A6A5", "#0F8554", "#73AF48",
 
 
 # This is going to be helpful to create some space for labels within the circle
-# Don't worry if it doesn't make much sense yet, you're going to see it in action below
 PLUS = 200
 
 fig, ax = plt.subplots(figsize=(8,8), subplot_kw={"projection": "polar"})
@@ -218,9 +217,7 @@ ax.set_xticks([])
 ax.set_yticklabels([])
 
 HANGLES = np.linspace(0, 2 * np.pi, 200)
-#ax.plot(HANGLES, np.repeat(1 * 24 * 60 + PLUS, 200), color= GREY88, lw=0.7)
-# Add our custom grid lines for the radial axis.
-# These lines indicate one day, one week, one month and one year.
+
 
 for angle, height, label in zip(ANGLES, HEIGHTS, df2.index):
   rotation = np.rad2deg(angle)
@@ -240,7 +237,6 @@ for angle, height, label in zip(ANGLES, HEIGHTS, df2.index):
         #rotation_mode="anchor")
 
 
-# If you have a look at the beginning of this post, you'll see the inner circle is not white.
 # This fill creates the effect of a very light grey background.
 ax.fill(HANGLES, np.repeat(PLUS, 200), GREY97)
 
