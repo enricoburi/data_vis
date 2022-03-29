@@ -84,7 +84,11 @@ st.write("## Chosen Filters: ")
 if all_data_textbox == True:
     st.write("All Data is chosen")
 else:
-    time_1, time_2, variant_filter,country_filter
+    "Timeframe: " +str(time_1) + " to " + str(time_2)
+    str_val = ", ".join(variant_filter)
+    "Chosen Variants: " + str(str_val)
+    "Chosen country: " + str(country_filter)
+
 
 #Output rankings based on users selections
 st.write(
@@ -92,18 +96,44 @@ st.write(
     ## Overview of the Variants
     """
 )
+col1, col2 = st.columns((.15,.3))
 
-def results_output():
+def graph3(data):
+  '''
+  Expects data.csv or its subsets as input
+  Returns the graph showing cumulative cases by variant over time
+  '''
 
-    fig = Figure()
-    ax = fig.subplots()
-    sns.barplot(x=data1.groupby('variant_grouped')['num_sequences'].sum().sort_values(ascending=False)[:5],
-                y=data1.groupby('variant_grouped')['num_sequences'].sum().sort_values(ascending=False)[:5].keys(), color='blue', ax=ax)
-    ax.set_xlabel('# of Occurances')
-    ax.set_ylabel('Variants')
-    st.pyplot(fig)
+  # Data manipulation: cumulative counts of cases by date and variant
+  sum_variant = data.groupby(["variant_grouped", "date"])["num_sequences"].sum().reset_index()
+  sum_variant.columns = ["Variant", "date", "Cases"]
+#  sum_variant = sum_variant.Variant.sort_values(ascending=False)[:5]
 
-df_results  = results_output()
+  # Define interaction
+  click = alt.selection_single(encodings=['color'], on="mouseover")
+
+  # Create plot
+  graph = alt.Chart(sum_variant).mark_bar(
+    opacity=0.7,
+    interpolate='basis',
+    line=True).properties(
+    title='Cases by Variant over time').encode(
+    x=alt.X("Cases:Q", stack=None),
+    y=alt.Y("Variant:N", title=None),
+    color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c'),legend=None),
+    tooltip = [alt.Tooltip('Variant:N')],
+    opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
+  ).add_selection(
+    click
+  )
+
+  return graph
+
+
+
+with col2:
+    st.altair_chart(graph3(data1))
+    #    df_results  = results_output()
 
 data['year']=pd.DatetimeIndex(data['date']).year
 data['month']=pd.DatetimeIndex(data['date']).month
@@ -257,8 +287,8 @@ ax.text(
     fontsize=18, fontweight="bold", linespacing=0.87, transform=ax.transAxes
 )
 
-
-fig
+with col1:
+    fig
 
 
 
@@ -267,6 +297,7 @@ fig
 st.write("""#### Cases by Variant Over Time  :chart_with_upwards_trend: """)
 
 # ------ Buri's graphs
+#col3,col4 = st.columns((.1,2))
 
 # Disable default datapoints limit in Altair
 alt.data_transformers.disable_max_rows()
@@ -299,49 +330,19 @@ def graph2(data):
       opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
   ).add_selection(
       click
-  )
+  ).properties(width=700)
+
 
   return graph
 
 
+#with col4:
 st.altair_chart(graph2(data1))
 
 
 
 # -----
 
-
-def graph3(data):
-  '''
-  Expects data.csv or its subsets as input
-  Returns the graph showing cumulative cases by variant over time
-  '''
-
-  # Data manipulation: cumulative counts of cases by date and variant
-  sum_variant = data.groupby(["variant_grouped", "date"])["num_sequences"].sum().reset_index()
-  sum_variant.columns = ["Variant", "date", "Cases"]
-
-  # Define interaction
-  click = alt.selection_single(encodings=['color'], on="mouseover")
-
-  # Create plot
-  graph = alt.Chart(sum_variant).mark_area(
-    opacity=0.7,
-    interpolate='basis',
-    line=True).properties(
-    title='Cases by Variant over time').encode(
-    x=alt.X("date:T", title=None),
-    y=alt.Y("Cases:Q", stack=None),
-    color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c')),
-    tooltip = [alt.Tooltip('Variant:N')],
-    opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
-  ).add_selection(
-    click
-  )
-
-  return graph
-
-st.altair_chart(graph3(data1))
 
 
 # -----
