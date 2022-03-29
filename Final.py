@@ -237,6 +237,98 @@ fig
 
 
 
+st.write("""#### Cases by Variant Over Time  :chart_with_upwards_trend: """)
+
+# ------ Buri's graphs
+
+import pandas as pd
+import altair as alt
+
+# Disable default datapoints limit in Altair
+alt.data_transformers.disable_max_rows()
+
+st.write("""##### The dataset used:""")
+data = pd.read_csv('data.csv')
+data.drop('Climate', 1, inplace=True)
+data
+
+
+def graph2(data):
+  '''
+  Expects data.csv or its subsets as input
+  Returns the graph showing cumulative cases by variant over time
+  '''
+
+  # Data manipulation: cumulative counts of cases by date and variant
+  cumsum_variant = data.groupby(["variant_grouped", "date"])["num_sequences"].sum().groupby(level=0).cumsum().reset_index()
+  cumsum_variant.columns = ["Variant", "date", "Cumulative Cases"]
+
+  # Define interaction
+  click = alt.selection_single(encodings=['color'], on="mouseover")
+
+  # Create plot
+  graph = alt.Chart(cumsum_variant).mark_area(
+      opacity=0.7,
+      interpolate='basis',
+      line=True).properties(
+      title='Cumulative Cases by Variant over time').encode(
+      x=alt.X("date:T",
+          title=None),
+      y=alt.Y("Cumulative Cases:Q"),
+      color=alt.Color('Variant:N',
+          scale=alt.Scale(scheme='category20c')),
+      tooltip = [alt.Tooltip('Variant:N')],
+      opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
+  ).add_selection(
+      click
+  )
+  
+  return graph
+
+  
+st.altair_chart(graph2(data))
+
+
+
+# -----
+
+
+def graph3(data):
+  '''
+  Expects data.csv or its subsets as input
+  Returns the graph showing cumulative cases by variant over time
+  '''
+
+  # Data manipulation: cumulative counts of cases by date and variant
+  sum_variant = data.groupby(["variant_grouped", "date"])["num_sequences"].sum().reset_index()
+  sum_variant.columns = ["Variant", "date", "Cases"]
+
+  # Define interaction
+  click = alt.selection_single(encodings=['color'], on="mouseover")
+
+  # Create plot
+  graph = alt.Chart(sum_variant).mark_area(
+    opacity=0.7,
+    interpolate='basis',
+    line=True).properties(
+    title='Cases by Variant over time').encode(
+    x=alt.X("date:T", title=None),
+    y=alt.Y("Cases:Q", stack=None),
+    color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c')),
+    tooltip = [alt.Tooltip('Variant:N')],
+    opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
+  ).add_selection(
+    click
+  )
+  
+  return graph
+
+st.altair_chart(graph3(data))
+
+
+# -----
+
+
 
 
 st.write(emoji.emojize("""## :microbe: Dynamic World Map & GDP vs Infant Mortality Index :microbe:"""))
@@ -259,13 +351,15 @@ df = pd.read_csv('cases_evolution.csv', index_col=0)
 df
 
 
+
 fig_1 = px.scatter_geo(
     df, 
     locations='countryCode',
     color='continent',
     hover_name='country',
+    projection='orthographic',
     size='cases',
-    projection="natural earth",
+    title=f'World COVID-19 Cases - Evolution Over Time',
     animation_frame="date"
 )
 
