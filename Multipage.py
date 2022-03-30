@@ -45,7 +45,7 @@ def sidebar_caption():
 
     #st.sidebar.header("Yay, this is a sidebar")
     #st.sidebar.markdown("This is a markdown element in the **sidebar**.")
-    
+
 
 def filter_table_option():
 
@@ -121,7 +121,7 @@ class Page2(Page):
 
 
         #Bring in the data
-        data = pd.read_csv('/Users/greshmababu/Downloads/data.csv')
+        data = pd.read_csv('data.csv')
         st.write("## THE DATA BEING USED")
         data=data.drop(["Unnamed: 0","Climate"], axis=1)
 
@@ -187,73 +187,130 @@ class Page2(Page):
             ## Overview of the Variants
             """
         )
+        def page123(data):
 
-        def graph3(data):
+          def graph1(data, click):
             '''
             Expects data.csv or its subsets as input
-            Returns the graph showing cumulative cases by variant over time
+            Returns the horizontal bar chart showing the total case by variant
             '''
 
-            # Data manipulation: cumulative counts of cases by date and variant
-            sum_variant = data.groupby(["variant_grouped"])["num_sequences"].sum().reset_index()
-            sum_variant.columns = ["Variant", "Cases"]
-            #  sum_variant = sum_variant.Variant.sort_values(ascending=False)[:5]
+            #Data manipulation: simple sum of cases by variant
+            total_sum_variant = data[["variant_grouped", "num_sequences"]]
+            total_sum_variant.columns = ["Variant", "Total Cases"]
 
-            # Define interaction
-            click = alt.selection_single(encodings=['color'], on="mouseover")
-
-            # Create plot
-            graph = alt.Chart(sum_variant).mark_bar(
-                opacity=0.7,
-                interpolate='basis',
-                line=True).properties(
-                title='Cases by Variant').encode(
-                x=alt.X("Cases:Q", scale=alt.Scale(type='log'), stack=None),
-                y=alt.Y("Variant:N", sort='-x', title=None),
-                color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c')),
+            graph = alt.Chart(total_sum_variant).mark_bar(
+                opacity=0.7).properties(
+                width=880,
+                title='Total Cases by Variant').encode(
+                x=alt.X('sum(Total Cases):Q',
+                    title="Total Cases"),
+                y=alt.Y('Variant:N',sort='-x',
+                    title=None),
+                color=alt.Color('Variant:N',
+                    scale=alt.Scale(scheme='category20c')),
                 tooltip = [alt.Tooltip('Variant:N'),alt.Tooltip('Cases:Q')],
-                opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
-            ).add_selection(
+                opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))).add_selection(
                 click
-            ).properties(width=600)
+            )
 
             return graph
 
-            #################
-
-
-        #create bar chart
-        def graph3_2(df):
+          def graph2(data, click):
             '''
             Expects data.csv or its subsets as input
             Returns the graph showing cumulative cases by variant over time
             '''
 
             # Data manipulation: cumulative counts of cases by date and variant
-            variantsum = df.groupby(["variant_grouped", "Country"])["num_sequences"].sum().reset_index()
+            cumsum_variant = data.groupby(["variant_grouped", "date"])["num_sequences"].sum().groupby(level=0).cumsum().reset_index()
+            cumsum_variant.columns = ["Variant", "date", "Cumulative Cases"]
+
+            # Define interaction (needs to be global variable for cross-chart interaction)
+            # click = alt.selection_single(encodings=['color'], on="mouseover")
+
+            # Create plot
+            graph = alt.Chart(cumsum_variant).mark_area(
+                opacity=0.7,
+                interpolate='basis',
+                line=True).properties(
+                title='Cumulative Cases by Variant over time').encode(
+                x=alt.X("date:T",
+                    title=None),
+                y=alt.Y("Cumulative Cases:Q"),
+                color=alt.Color('Variant:N',
+                    scale=alt.Scale(scheme='category20c')),
+                tooltip = [alt.Tooltip('Variant:N'),alt.Tooltip('Cases:Q')],
+                opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))).add_selection(
+                click
+            )
+
+            return graph
+
+          def graph3(data, click):
+            '''
+            Expects data.csv or its subsets as input
+            Returns the graph showing cumulative cases by variant over time
+            '''
+
+            # Data manipulation: cumulative counts of cases by date and variant
+            sum_variant = data.groupby(["variant_grouped", "date"])["num_sequences"].sum().reset_index()
+            sum_variant.columns = ["Variant", "date", "Cases"]
+
+            # Define interaction (needs to be global variable for cross-chart interaction)
+            # click = alt.selection_single(encodings=['color'], on="mouseover")
+
+            # Create plot
+            graph = alt.Chart(sum_variant).mark_area(
+              opacity=0.7,
+              interpolate='basis',
+              line=True).properties(
+              title='Cases by Variant over time').encode(
+              x=alt.X("date:T", title=None),
+              y=alt.Y("Cases:Q", stack=None),
+              color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c')),
+              tooltip = [alt.Tooltip('Variant:N'),alt.Tooltip('Cases:Q')],
+              opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))).add_selection(
+              click
+            )
+
+            return graph
+
+          def graph3_2(data, click):
+            '''
+            Expects data.csv or its subsets as input
+            Returns the graph showing cumulative cases by variant over time
+            '''
+
+            # Data manipulation: cumulative counts of cases by date and variant
+            variantsum = data.groupby(["variant_grouped", "Country"])["num_sequences"].sum().reset_index()
             variantsum.columns = ["Variant", "Country", "Cumulative Cases"]
 
             # Define interaction
-            click = alt.selection_single(encodings=['color'], on="mouseover")
+            #click = alt.selection_single(encodings=['color'], on="mouseover")
             # Create plot
 
             graph = alt.Chart(variantsum).mark_bar(
-                opacity=0.7,
-                interpolate='basis',
-                line=True).properties(
-                title='Cases by Variant').encode(
-                x=alt.X('Cumulative Cases:Q', stack = 'normalize'),
-                y=alt.Y("Country:N", title=None),
-                color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c'),legend=alt.Legend(title="Variants by color")),
-                tooltip = [alt.Tooltip('Country:N'),alt.Tooltip('Cumulative Cases:Q')],
-                opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
+              opacity=0.7,
+              interpolate='basis',
+              line=True).properties(
+              title='Cases by Variant').encode(
+              x=alt.X('Cumulative Cases:Q', stack = 'normalize'),
+              y=alt.Y("Country:N", title=None),
+              color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c'),legend=alt.Legend(title="Variants by color")),
+              tooltip = [alt.Tooltip('Country:N'),alt.Tooltip('Cumulative Cases:Q')],
+              opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
             ).add_selection(
-                click
-            ).properties(width=600)
+              click
+            )#.properties(width=600)
 
             return graph
 
-        st.altair_chart(graph3_2(data1))
+          click = alt.selection_single(encodings=['color'], on="mouseover", resolve="global")
+
+          return graph1(data,click) & (graph2(data, click) | graph3(data, click) & graph3_2(data, click))
+
+        st.altair_chart(page123(data1))
 
 
         #################
@@ -272,42 +329,6 @@ class Page2(Page):
         # Disable default datapoints limit in Altair
         alt.data_transformers.disable_max_rows()
 
-        def graph2(data):
-            '''
-            Expects data.csv or its subsets as input
-            Returns the graph showing cumulative cases by variant over time
-            '''
-
-            # Data manipulation: cumulative counts of cases by date and variant
-            cumsum_variant = data.groupby(["variant_grouped", "date"])["num_sequences"].sum().groupby(level=0).cumsum().reset_index()
-            cumsum_variant.columns = ["Variant", "date", "Cumulative Cases"]
-
-            # Define interaction
-            click = alt.selection_single(encodings=['color'], on="mouseover")
-
-            # Create plot
-            graph = alt.Chart(cumsum_variant).mark_area(
-                opacity=0.7,
-                interpolate='basis',
-                line=True).properties(
-                title='Cumulative Cases by Variant over time').encode(
-                x=alt.X("date:T",
-                    title=None),
-                y=alt.Y("Cumulative Cases:Q"),
-                color=alt.Color('Variant:N',
-                    scale=alt.Scale(scheme='category20c')),
-                tooltip = [alt.Tooltip('Variant:N')],
-                opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
-            ).add_selection(
-                click
-            ).properties(width=600)
-
-
-            return graph
-
-
-        #with col4:
-        st.altair_chart(graph2(data1))
 
 
 class Page3(Page):
@@ -325,7 +346,7 @@ class Page3(Page):
         st.write("""#### World COVID-19 Cases - Evolution Over Time :earth_africa: """)
 
         st.write("""##### The dataset used:""")
-        df = pd.read_csv('/Users/greshmababu/Downloads/cases_evolution.csv', index_col=0)
+        df = pd.read_csv('cases_evolution.csv', index_col=0)
         df
 
 
@@ -348,7 +369,7 @@ class Page3(Page):
 
         st.write("""##### The dataset used:""")
         # Importing GDP vs Infant mortality dataframe
-        data = pd.read_csv('/Users/greshmababu/Downloads/data_gdp.csv', index_col=0)
+        data = pd.read_csv('data_gdp.csv', index_col=0)
         data
 
         # Plot 2
@@ -377,7 +398,7 @@ def main():
         "About the app": About,
         "Covid by Variants": Page2,
         "Evolution of Covid": Page3,
-        
+
     }
 
     # Select pages
