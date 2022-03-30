@@ -64,20 +64,19 @@ def user_input_features():
     country_filter = st.sidebar.selectbox("Select a region:", country_list)
     return time_1, time_2, variant_filter,country_filter
 
-time_1, time_2, variant_filter,country_filter = user_input_features()
+time_1, time_2, variant_filter, country_filter = user_input_features()
 
 if st.sidebar.checkbox("Display all Data"):
     data1=data
     all_data_textbox = True
 else:
-    data1 = data[(data.variant_grouped.isin(variant_filter)) & (time_1<=data.date) & (time_2>=data.date)]
     all_data_textbox = False
     if country_filter == 'All':
-        data1=data1
+        data1=data[(data.variant_grouped.isin(variant_filter)) & (time_1<=data.date) & (time_2>=data.date)]
     else:
         data1 = data[data.Country == country_filter]
-
-    data1
+        data1 = data1[(data1.variant_grouped.isin(variant_filter)) & (time_1<=data1.date) & (time_2>=data1.date)]
+data1
 
 
 st.write("## Chosen Filters: ")
@@ -104,7 +103,7 @@ def graph3(data):
   '''
 
   # Data manipulation: cumulative counts of cases by date and variant
-  sum_variant = data1.groupby(["variant_grouped"])["num_sequences"].sum().reset_index()
+  sum_variant = data.groupby(["variant_grouped"])["num_sequences"].sum().reset_index()
   sum_variant.columns = ["Variant", "Cases"]
 #  sum_variant = sum_variant.Variant.sort_values(ascending=False)[:5]
 
@@ -217,15 +216,6 @@ def graph2(data):
 
 #with col4:
 st.altair_chart(graph2(data1))
-
-
-
-# -----
-
-
-
-# -----
-
 
 
 
