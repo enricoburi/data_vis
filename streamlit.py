@@ -96,7 +96,6 @@ st.write(
     ## Overview of the Variants
     """
 )
-col1, col2 = st.columns((.15,.3))
 
 def graph3(data):
   '''
@@ -120,224 +119,61 @@ def graph3(data):
     title='Cases by Variant').encode(
     x=alt.X("Cases:Q", scale=alt.Scale(type='log'), stack=None),
     y=alt.Y("Variant:N", sort='-x', title=None),
-    color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c'),legend=None),
+    color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c')),
     tooltip = [alt.Tooltip('Variant:N'),alt.Tooltip('Cases:Q')],
     opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
   ).add_selection(
     click
-  )
+  ).properties(width=600)
 
   return graph
-
-with col2:
-    st.altair_chart(graph3(data1))
-    #    df_results  = results_output()
-
 
 #################
 
 
 #create bar chart
-def graph3_2(data):
+def graph3_2(df):
   '''
   Expects data.csv or its subsets as input
   Returns the graph showing cumulative cases by variant over time
   '''
 
   # Data manipulation: cumulative counts of cases by date and variant
-  sum_variant = data1.groupby(["variant_grouped"])["num_sequences"].sum().reset_index()
-  sum_variant.columns = ["Variant", "Cases"]
-#  sum_variant = sum_variant.Variant.sort_values(ascending=False)[:5]
+  variantsum = df.groupby(["variant_grouped", "Country"])["num_sequences"].sum().reset_index()
+  variantsum.columns = ["Variant", "Country", "Cumulative Cases"]
 
   # Define interaction
   click = alt.selection_single(encodings=['color'], on="mouseover")
-
   # Create plot
-  graph = alt.Chart(sum_variant).mark_bar(
+
+  graph = alt.Chart(variantsum).mark_bar(
     opacity=0.7,
     interpolate='basis',
     line=True).properties(
     title='Cases by Variant').encode(
-    x=alt.X("Cases:Q", scale=alt.Scale(type='log'), stack=None),
-    y=alt.Y("Variant:N", sort='-x', title=None),
-    color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c'),legend=None),
-    tooltip = [alt.Tooltip('Variant:N'),alt.Tooltip('Cases:Q')],
+    x=alt.X('Cumulative Cases:Q', stack = 'normalize'),
+    y=alt.Y("Country:N", title=None),
+    color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c'),legend=alt.Legend(title="Variants by color")),
+    tooltip = [alt.Tooltip('Country:N'),alt.Tooltip('Cumulative Cases:Q')],
     opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
   ).add_selection(
     click
-  )
+  ).properties(width=600)
 
   return graph
-
 
 st.altair_chart(graph3_2(data1))
 
 
-
 #################
-
-
-
 data['year']=pd.DatetimeIndex(data['date']).year
 data['month']=pd.DatetimeIndex(data['date']).month
 
 
-#year_to_filter = st.slider('year', 2020, 2021, 2020)
-filtered_data = data[data['year'] == time_1.year]
-#filtered_data = filtered_data[filtered_data['variant_grouped'].isin(variant_filter)]
-#filtered_data = filtered_data[filtered_data['Country'].isin(location_filter)]
-group = filtered_data.groupby(['month'])
-
-df2 = group.apply(lambda x: x['num_sequences_total'].unique())
-
-df2=pd.DataFrame(df2)
-
-array=[]
-for iter,rows in df2.iterrows():
-  a=np.sum(rows[0])
-  array.append(a)
-
-df2['Total']=array
-TOTAL=df2['Total']
-
-TIME_MAX = np.max(TOTAL)
-TIME_MIN = np.min(TOTAL)
-
-# 'low' and 'high' refer to the final dot size.
-def scale_to_interval(x, low=100, high=1000):
-    return ((x - TIME_MIN) / (TIME_MAX - TIME_MIN)) * (high - low) + low
-
-if time_1.year == 2021:
-    NEW=['January','February','March','April', 'May','June', 'July','August', 'September','October','November','December'  ]
-else:
-    NEW=['May','June', 'July','August', 'September','October','November','December' ]
-
-df2=df2.reindex(NEW)
-print(df2.shape)
-# Different sades of grey used in the plot
-GREY88 = "#e0e0e0"
-GREY85 = "#d9d9d9"
-GREY82 = "#d1d1d1"
-GREY79 = "#c9c9c9"
-GREY97 = "#f7f7f7"
-GREY60 = "#999999"
-
-# Values for the x axis
-ANGLES = np.linspace(0, 2 * np.pi, len(df2), endpoint=False)
-
-# Heights of the lines and y-position of the dot are given by the times.
-HEIGHTS = np.array(array)
-
-# Category values for the colors
-CATEGORY_CODES = pd.Categorical(df2.index).codes
-
-# Colormap taken from https://carto.com/carto-colors/
-COLORMAP = ["#5F4690", "#1D6996", "#38A6A5", "#0F8554", "#73AF48",
-            "#EDAD08", "#E17C05", "#CC503E", "#94346E", "#666666"]
-
-# Select colors for each password according to its category.
-#COLORS = np.array(COLORMAP)[CATEGORY_CODES]
-
-
-# This is going to be helpful to create some space for labels within the circle
-# Don't worry if it doesn't make much sense yet, you're going to see it in action below
-PLUS = 200
-
-fig, ax = plt.subplots(figsize=(8,8), subplot_kw={"projection": "polar"})
-
-# Set background color to white, both axis and figure.
-fig.patch.set_facecolor("white")
-ax.set_facecolor("white")
-
-# Use logarithmic scale for the radial axis
-ax.set_rscale('symlog')
-
-# Angular axis starts at 90 degrees, not at 0
-ax.set_theta_offset(np.pi / 2)
-
-# Reverse the direction to go counter-clockwise.
-ax.set_theta_direction(-1)
-
-# Add lines
-ax.vlines(ANGLES, 0 + PLUS, HEIGHTS + PLUS , lw=0.9)
-
-# Add dots
-ax.scatter(ANGLES, HEIGHTS + PLUS, s=scale_to_interval(HEIGHTS),picker=True)
-
-
-
-for angle, height, label in zip(ANGLES, HEIGHTS, df2.index):
-  rotation = np.rad2deg(angle)
-  alignment = ""
-  if angle >= np.pi/2 and angle < 3*np.pi/2:
-        alignment = "right"
-        #rotation = rotation + 180
-  else:
-        alignment = "left"
-  ax.text(
-        x=angle,
-        y=1000,
-        s=label,
-        ha=alignment,
-        va='center',
-        picker=True )
-        #rotation=rotation,
-        #rotation_mode="anchor") ;
-
-# Start by removing spines for both axes
-ax.spines["start"].set_color("none")
-ax.spines["polar"].set_color("none")
-
-# Remove grid lines, ticks, and tick labels.
-ax.grid(False)
-ax.set_xticks([])
-ax.set_yticklabels([])
-
-HANGLES = np.linspace(0, 2 * np.pi, 200)
-#ax.plot(HANGLES, np.repeat(1 * 24 * 60 + PLUS, 200), color= GREY88, lw=0.7)
-# Add our custom grid lines for the radial axis.
-# These lines indicate one day, one week, one month and one year.
-
-for angle, height, label in zip(ANGLES, HEIGHTS, df2.index):
-  rotation = np.rad2deg(angle)
-  alignment = ""
-  if angle >= np.pi/2 and angle < 3*np.pi/2:
-        alignment = "right"
-        rotation = rotation + 180
-  else:
-        alignment = "left"
-  ax.text(
-        x=angle,
-        y=1000,
-        s=label,
-        ha=alignment,
-        va='center')
-        #rotation=rotation,
-        #rotation_mode="anchor")
-
-
-# If you have a look at the beginning of this post, you'll see the inner circle is not white.
-# This fill creates the effect of a very light grey background.
-ax.fill(HANGLES, np.repeat(PLUS, 200), GREY97)
-
-# Note the 'transform=ax.transAxes'
-# It allows us to pass 'x' and 'y' in terms of the (0, 1) coordinates of the axis
-# instead of having to use the coordinates of the data.
-# (0.5, 0.5) represents the middle of the axis in this transformed coordinate system
-ax.text(
-    x=0.5, y=0.5, s="********\nCOVID\nCASES\nBY MONTH\n********",
-    color=GREY60, va="center", ha="center", ma="center", fontfamily="Roboto Mono",
-    fontsize=18, fontweight="bold", linespacing=0.87, transform=ax.transAxes
-)
-
-with col1:
-    fig
-
-
-
-
-
 st.write("""#### Cases by Variant Over Time  :chart_with_upwards_trend: """)
+
+st.altair_chart(graph3(data1))
+    #    df_results  = results_output()
 
 # ------ Buri's graphs
 #col3,col4 = st.columns((.1,2))
@@ -373,7 +209,7 @@ def graph2(data):
       opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
   ).add_selection(
       click
-  ).properties(width=800)
+  ).properties(width=600)
 
 
   return graph
