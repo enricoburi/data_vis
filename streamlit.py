@@ -54,7 +54,7 @@ st.sidebar.header('Filter the Graphs')
 variants=data['variant_grouped'].unique()
 variants=variants[variants!='non-who']
 locations=data['Country'].unique()
-country_list = sorted(set(data["Country"]))
+country_list = sorted(set(data["Continent"]))
 country_list.insert(0,'All')
 sorted(country_list)
 
@@ -74,7 +74,7 @@ else:
     if country_filter == 'All':
         data1=data[(data.variant_grouped.isin(variant_filter)) & (time_1<=data.date) & (time_2>=data.date)]
     else:
-        data1 = data[data.Country == country_filter]
+        data1 = data[data.Continent == country_filter]
         data1 = data1[(data1.variant_grouped.isin(variant_filter)) & (time_1<=data1.date) & (time_2>=data1.date)]
 data1
 
