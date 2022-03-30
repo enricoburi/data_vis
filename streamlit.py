@@ -105,7 +105,7 @@ def graph3(data):
   '''
 
   # Data manipulation: cumulative counts of cases by date and variant
-  sum_variant = data.groupby(["variant_grouped", "date"])["num_sequences"].sum().reset_index()
+  sum_variant = data1.groupby(["variant_grouped", "date"])["num_sequences"].sum().reset_index()
   sum_variant.columns = ["Variant", "date", "Cases"]
 #  sum_variant = sum_variant.Variant.sort_values(ascending=False)[:5]
 
@@ -117,8 +117,8 @@ def graph3(data):
     opacity=0.7,
     interpolate='basis',
     line=True).properties(
-    title='Cases by Variant over time').encode(
-    x=alt.X("Cases:Q", stack=None),
+    title='Cases by Variant').encode(
+    x=alt.X("Cases:Q", sort='-x', stack=None),
     y=alt.Y("Variant:N", title=None),
     color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c'),legend=None),
     tooltip = [alt.Tooltip('Variant:N')],
@@ -330,7 +330,7 @@ def graph2(data):
       opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
   ).add_selection(
       click
-  ).properties(width=700)
+  ).properties(width=800)
 
 
   return graph
