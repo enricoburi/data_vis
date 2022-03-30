@@ -105,8 +105,8 @@ def graph3(data):
   '''
 
   # Data manipulation: cumulative counts of cases by date and variant
-  sum_variant = data1.groupby(["variant_grouped", "date"])["num_sequences"].sum().reset_index()
-  sum_variant.columns = ["Variant", "date", "Cases"]
+  sum_variant = data1.groupby(["variant_grouped"])["num_sequences"].sum().reset_index()
+  sum_variant.columns = ["Variant", "Cases"]
 #  sum_variant = sum_variant.Variant.sort_values(ascending=False)[:5]
 
   # Define interaction
@@ -118,10 +118,50 @@ def graph3(data):
     interpolate='basis',
     line=True).properties(
     title='Cases by Variant').encode(
-    x=alt.X("Cases:Q", sort='-x', stack=None),
-    y=alt.Y("Variant:N", title=None),
+    x=alt.X("Cases:Q", scale=alt.Scale(type='log'), stack=None),
+    y=alt.Y("Variant:N", sort='-x', title=None),
     color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c'),legend=None),
-    tooltip = [alt.Tooltip('Variant:N')],
+    tooltip = [alt.Tooltip('Variant:N'),alt.Tooltip('Cases:Q')],
+    opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
+  ).add_selection(
+    click
+  )
+
+  return graph
+
+with col2:
+    st.altair_chart(graph3(data1))
+    #    df_results  = results_output()
+
+
+#################
+
+
+#create bar chart
+def graph3_2(data):
+  '''
+  Expects data.csv or its subsets as input
+  Returns the graph showing cumulative cases by variant over time
+  '''
+
+  # Data manipulation: cumulative counts of cases by date and variant
+  sum_variant = data1.groupby(["variant_grouped"])["num_sequences"].sum().reset_index()
+  sum_variant.columns = ["Variant", "Cases"]
+#  sum_variant = sum_variant.Variant.sort_values(ascending=False)[:5]
+
+  # Define interaction
+  click = alt.selection_single(encodings=['color'], on="mouseover")
+
+  # Create plot
+  graph = alt.Chart(sum_variant).mark_bar(
+    opacity=0.7,
+    interpolate='basis',
+    line=True).properties(
+    title='Cases by Variant').encode(
+    x=alt.X("Cases:Q", scale=alt.Scale(type='log'), stack=None),
+    y=alt.Y("Variant:N", sort='-x', title=None),
+    color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c'),legend=None),
+    tooltip = [alt.Tooltip('Variant:N'),alt.Tooltip('Cases:Q')],
     opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
   ).add_selection(
     click
@@ -130,10 +170,13 @@ def graph3(data):
   return graph
 
 
+st.altair_chart(graph3_2(data1))
 
-with col2:
-    st.altair_chart(graph3(data1))
-    #    df_results  = results_output()
+
+
+#################
+
+
 
 data['year']=pd.DatetimeIndex(data['date']).year
 data['month']=pd.DatetimeIndex(data['date']).month
