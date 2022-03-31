@@ -1,3 +1,4 @@
+from __future__ import annotations
 import streamlit as st
 import pandas as pd
 import os
@@ -14,6 +15,12 @@ import plotly.io as pio
 import plotly.graph_objects as go
 import plotly.express as px
 import math
+
+from ctypes import sizeof
+from genericpath import exists
+from pickle import TRUE
+from turtle import color, fillcolor
+from streamlit_plotly_events import plotly_events
 
 linkedinlink = '[Github](https://github.com/patrickld/data_vis/)'
 covidlink='[Kaggle](https://www.kaggle.com/datasets/yamqwe/omicron-covid19-variant-daily-cases?select=covid-variants.csv)'
@@ -88,8 +95,8 @@ class About(Page):
         st.write(emoji.emojize("""# :microbe: COVID-19 PandeMap :microbe:"""))
         st.write("""## How it works""")
         st.write("This tool will enable users to quickly visualize COVID-19 global evolution, "
-         "track the development of the virus and its variants and measure the correlation "
-         "between the development of a country and the number of COVID-19 cases.")
+        "track the development of the virus and its variants and measure the correlation "
+        "between the development of a country and the number of COVID-19 cases.")
         st.write("##### For viewing the Sourcecode, click here:", linkedinlink)
         st.write("""## Navigating the app""")
         st.write("The app consists of 4 pages, including this introduction page. "
@@ -121,6 +128,9 @@ class Page2(Page):
         st.write("This tool will enable users to quickly visualize COVID-19 global evolution, "
         "track the development of the virus and its variants and measure the correlation "
         "between the development of a country and the number of COVID-19 cases.")
+        #st.write("This tool will enable users to quickly visualize COVID-19 global evolution, "
+        "track the development of the virus and its variants and measure the correlation "
+        "between the development of a country and the number of COVID-19 cases."
         #st.write("##### For viewing the Sourcecode, click here:", linkedinlink)
 
 
@@ -191,12 +201,13 @@ class Page2(Page):
             ## Overview of the Variants
             """
         )
-        def page123(data):
+        
+        def block1(data):
 
-          def graph1(data, click):
+          def total_cases(data, click):
             '''
             Expects data.csv or its subsets as input
-            Returns the horizontal bar chart showing the total case by variant
+            Returns the horizontal bar chart showing the total cases by variant
             '''
 
             #Data manipulation: simple sum of cases by variant
@@ -205,11 +216,11 @@ class Page2(Page):
 
             graph = alt.Chart(total_sum_variant).mark_bar(
                 opacity=0.7).properties(
-                width=880,
                 title='Total Cases by Variant').encode(
                 x=alt.X('sum(Total Cases):Q',
-                    title="Total Cases"),
-                y=alt.Y('Variant:N',sort='-x',
+                    title="Total Cases (log scale)",
+                    scale=alt.Scale(type="log")),
+                y=alt.Y('Variant:N',
                     title=None),
                 color=alt.Color('Variant:N',
                     scale=alt.Scale(scheme='category20c')),
@@ -220,7 +231,7 @@ class Page2(Page):
 
             return graph
 
-          def graph2(data, click):
+          def cum_cases(data, click):
             '''
             Expects data.csv or its subsets as input
             Returns the graph showing cumulative cases by variant over time
@@ -251,7 +262,7 @@ class Page2(Page):
 
             return graph
 
-          def graph3(data, click):
+          def waves(data, click):
             '''
             Expects data.csv or its subsets as input
             Returns the graph showing cumulative cases by variant over time
@@ -280,7 +291,7 @@ class Page2(Page):
 
             return graph
 
-          def graph3_2(data, click):
+          def cases_countries(data, click):
             '''
             Expects data.csv or its subsets as input
             Returns the graph showing cumulative cases by variant over time
@@ -288,7 +299,7 @@ class Page2(Page):
 
             # Data manipulation: cumulative counts of cases by date and variant
             variantsum = data.groupby(["variant_grouped", "Country"])["num_sequences"].sum().reset_index()
-            variantsum.columns = ["Variant", "Country", "Cumulative Cases"]
+            variantsum.columns = ["Variant", "Country", "Total Cases"]
 
             # Define interaction
             #click = alt.selection_single(encodings=['color'], on="mouseover")
@@ -299,10 +310,10 @@ class Page2(Page):
               interpolate='basis',
               line=True).properties(
               title='Cases by Variant').encode(
-              x=alt.X('Cumulative Cases:Q', stack = 'normalize'),
+              x=alt.X('Total Cases:Q', stack = 'normalize'),
               y=alt.Y("Country:N", title=None),
-              color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c'),legend=alt.Legend(title="Variants by color")),
-              tooltip = [alt.Tooltip('Country:N'),alt.Tooltip('Cumulative Cases:Q')],
+              color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c'),legend=alt.Legend(title="Variants")),
+              tooltip = [alt.Tooltip('Country:N'), alt.Tooltip('Variant:N'), alt.Tooltip('Total Cases:Q')],
               opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
             ).add_selection(
               click
@@ -312,9 +323,9 @@ class Page2(Page):
 
           click = alt.selection_single(encodings=['color'], on="mouseover", resolve="global")
 
-          return graph1(data,click) & (graph2(data, click) | graph3(data, click) & graph3_2(data, click))
+          return (total_cases(data,click) & (waves(data, click) & cum_cases(data, click)) | cases_countries(data, click))
 
-        st.altair_chart(page123(data1))
+        st.altair_chart(block1(data1))
 
 
         #################
@@ -323,12 +334,6 @@ class Page2(Page):
 
 
         st.write("""#### Cases by Variant Over Time  :chart_with_upwards_trend: """)
-
-        st.altair_chart(graph3(data1))
-        #    df_results  = results_output()
-
-        # ------ Buri's graphs
-        #col3,col4 = st.columns((.1,2))
 
         # Disable default datapoints limit in Altair
         alt.data_transformers.disable_max_rows()
@@ -394,6 +399,190 @@ class Page3(Page):
         # hovertemplaye=None
         # hovermode="x unified"
 
+class Page4(Page):
+    def __init__(self, data, **kwargs):
+        name = "Page2"
+        super().__init__(name, data, **kwargs)
+    def content(self):
+        data = pd.read_csv('data.csv')
+        data=data.drop(["Unnamed: 0","Climate"], axis=1)
+        def date_change(date_str):
+                    format_str = '%Y-%m-%d' # The format
+                    datetime_obj = datetime.strptime(date_str, format_str)
+                    # print(datetime_obj.date())
+                    return datetime_obj.date()
+
+        data["date"] = data["date"].apply(date_change)
+
+        variants=data['variant_grouped'].unique()
+        variants=variants[variants!='non-who']
+        locations=data['Country'].unique()
+        chosen_variants = data.groupby('variant_grouped')['num_sequences'].sum().sort_values(ascending=False)[:5]
+
+
+        #Create and name sidebar
+        st.sidebar.header('Filter the Graphs')
+        #st.sidebar.write("""#### Choose your SG bias""")
+        variants=data['variant_grouped'].unique()
+        variants=variants[variants!='non-who']
+        locations=data['Country'].unique()
+        country_list = sorted(set(data["Continent"]))
+        country_list.insert(0,'All')
+        sorted(country_list)
+
+        def user_input_features():
+                    time_filter = st.sidebar.slider('Time', 2020, 2021, 2020, 1)
+                    variant_filter = st.sidebar.multiselect('Variant', variants,variants)
+                    country_filter = st.sidebar.selectbox("Select a region:", country_list)
+                    return time_filter, variant_filter,country_filter
+
+        time_filter, variant_filter, country_filter = user_input_features()
+        st.write(emoji.emojize("""# :microbe: COVID-19 Cases by month:"""))
+        st.write("This interactive plot gives an overview of the monthly trends in covid evolution. "
+        "The filters on the left give the option of choosing the year, region and variant we wish "
+        "to study. On choosing any of the filters, both the plots will adjust accordingly. ")
+
+        st.write("""### Click on any of the months on the first visualization to see the variant distribution """
+        "of the total cases in that month. """)
+        data['year']=pd.DatetimeIndex(data['date']).year
+        data['month']=pd.DatetimeIndex(data['date']).month
+        data['month']=pd.to_datetime(data['month'], format='%m').dt.month_name()
+        #data
+
+        #print(data)
+        if st.sidebar.checkbox("Display all Data"):
+            data1=data
+            all_data_textbox = True
+        else:
+            all_data_textbox = False
+            data=data[data.year==time_filter]
+            if country_filter == 'All':
+                data1=data[data.variant_grouped.isin(variant_filter)]
+            else:
+                data1 = data[data.Continent == country_filter]
+                data1 = data1[data1.variant_grouped.isin(variant_filter)]
+        #data1
+
+        sum_month = data1.groupby(["month"])["num_sequences"].sum().reset_index()
+
+        NEW=['January','February','March','April', 'May','June', 'July','August', 'September','October','November','December' ]
+
+        r_cord=[]
+
+        for i in NEW:
+            if i not in np.array(sum_month['month']):
+                r_cord.append(0)
+            else:
+                r_cord.append(int(sum_month[sum_month['month']==i].num_sequences))
+
+        D=[]
+        for i in range(len(r_cord)):
+            D.append([NEW[i],r_cord[i]])
+
+        Cases=pd.DataFrame(D, columns=["Month","Number of cases"])
+
+        col1, col2 =st.columns(2)
+        col1.metric("Year: ", time_filter)
+        col2.metric("Region: ", country_filter)
+
+        col1, col2 = st.columns(2)
+
+        theta =np.linspace(90,450,13)
+        theta=theta[0:12]
+        selected_points={}
+        with col1:
+            fig = go.Figure()
+            circle=np.linspace(0,360,60)
+            circle_r=np.empty(len(circle))
+            circle_r.fill(0.1)
+            marker_size=r_cord/np.linalg.norm(r_cord)
+            marker_size=marker_size*100
+            fig.add_trace(go.Scatterpolar(
+                    r = circle_r,
+                    theta = circle,
+                    mode = 'lines',
+                    #hoverinfo='skip',
+                    line_color = 'green',
+                    #hoverinfo=None,
+                    hoverinfo='skip',
+                    showlegend = False
+                ))
+            a=str(np.sum(r_cord))
+
+            fig.add_trace(go.Barpolar(
+                r=r_cord,
+                theta=theta,
+                width=[1,1,1,1,1,1,1,1,1,1,1,1,],
+                #marker_color=["#E4FF87", '#709BFF', '#709BFF', '#FFAA70', '#FFAA70', '#FFDF70', '#B6FFB4'],
+                marker_line_color="green",
+                text=['January','February','March','April', 'May','June', 'July','August', 'September','October','November','December' ],
+                marker_line_width=1,
+                opacity=0.8,
+                #text=r_cord,
+                #hoverinfo='text',
+                hovertemplate ='Total no of cases<br>%{r:.2f}'
+
+            )
+            )
+            fig.add_trace(go.Scatterpolar(
+                r=[5,5,5,5,5,5,5,5,5,5,5,5],
+                theta=theta,
+                mode='markers + text',
+                text=['January','February','March','April', 'May','June', 'July','August', 'September','October','November','December' ],
+                fillcolor='green',
+                marker_size=marker_size,
+                customdata = [[NEW[i],r_cord[i]] for i in range(len(r_cord))],
+                #name=r_cord,
+                textposition="middle center",
+                #hoverinfo='name',
+                hovertemplate= '%{customdata[0]}<br>Total no of cases:<br>%{customdata[1]:.3f}'
+            ))
+
+            fig.add_trace(go.Scatterpolar(
+                r=r_cord,
+                theta=theta,
+                mode='markers',
+                fillcolor='green',
+                marker_size=r_cord
+            ))
+
+            fig.update_layout(showlegend=False,
+                template=None,
+                polar = dict(
+                    radialaxis = dict(range=[-4, 5], showline=False, showgrid=False,showticklabels=False, ticks=''),
+                    angularaxis = dict(showline=False,showticklabels=False, showgrid=False, ticks='')
+                )
+            )
+
+            selected_points = plotly_events(fig)
+
+        month='All'
+        if len(selected_points)!=0:
+            month=selected_points[0]['pointNumber']
+            month=NEW[month]
+            data2=data1[data1['month']==month]
+        else:
+            data2=data1
+
+        df  = data2.groupby(["variant_grouped"])["num_sequences"].sum().reset_index()
+        df=df.rename(columns={"variant_grouped":"Variants", "num_sequences":"Total No. of cases"})
+        df=df.sort_values(by=['Variants'],ascending=True)
+        with col2:
+            fig2= px.bar(df, x="Total No. of cases", y="Variants", orientation='h', color="Variants")
+            fig2
+
+        #st.write("The first plot represents total number of ")
+
+
+        if month!='All':
+            st.write("#### Month chosen: "+ month)
+
+        st.write("The first visualization encodes the number of covid cases in each month through the marker size. "
+        "For quantitative understanding, the values are given in the hover table as well. The second visualization "
+        "is a representation of the covid cases during the time period (year/month if selected) by variants. ")
+        st.write("Given below is also the data table for covid cases in each month." )
+        Cases
+
 
       
 
@@ -407,6 +596,7 @@ def main():
         "About the app": About,
         "Covid by Variants": Page2,
         "Evolution of Covid": Page3,
+        "Greshma": Page4,
 
     }
 
