@@ -19,7 +19,7 @@ import math
 from ctypes import sizeof
 from genericpath import exists
 from pickle import TRUE
-from turtle import color, fillcolor
+#from turtle import color, fillcolor
 from streamlit_plotly_events import plotly_events
 
 linkedinlink = '[Github](https://github.com/patrickld/data_vis/)'
@@ -456,125 +456,125 @@ class Page4(Page):
                 data1 = data1[data1.variant_grouped.isin(variant_filter)]
         #data1
 
-        sum_month = data1.groupby(["month"])["num_sequences"].sum().reset_index()
+#         sum_month = data1.groupby(["month"])["num_sequences"].sum().reset_index()
 
-        NEW=['January','February','March','April', 'May','June', 'July','August', 'September','October','November','December' ]
+#         NEW=['January','February','March','April', 'May','June', 'July','August', 'September','October','November','December' ]
 
-        r_cord=[]
+#         r_cord=[]
 
-        for i in NEW:
-            if i not in np.array(sum_month['month']):
-                r_cord.append(0)
-            else:
-                r_cord.append(int(sum_month[sum_month['month']==i].num_sequences))
+#         for i in NEW:
+#             if i not in np.array(sum_month['month']):
+#                 r_cord.append(0)
+#             else:
+#                 r_cord.append(int(sum_month[sum_month['month']==i].num_sequences))
 
-        D=[]
-        for i in range(len(r_cord)):
-            D.append([NEW[i],r_cord[i]])
+#         D=[]
+#         for i in range(len(r_cord)):
+#             D.append([NEW[i],r_cord[i]])
 
-        Cases=pd.DataFrame(D, columns=["Month","Number of cases"])
+#         Cases=pd.DataFrame(D, columns=["Month","Number of cases"])
 
-        col1, col2 =st.columns(2)
-        col1.metric("Year: ", time_filter)
-        col2.metric("Region: ", country_filter)
+#         col1, col2 =st.columns(2)
+#         col1.metric("Year: ", time_filter)
+#         col2.metric("Region: ", country_filter)
 
-        col1, col2 = st.columns(2)
+#         col1, col2 = st.columns(2)
 
-        theta =np.linspace(90,450,13)
-        theta=theta[0:12]
-        selected_points={}
-        with col1:
-            fig = go.Figure()
-            circle=np.linspace(0,360,60)
-            circle_r=np.empty(len(circle))
-            circle_r.fill(0.1)
-            marker_size=r_cord/np.linalg.norm(r_cord)
-            marker_size=marker_size*100
-            fig.add_trace(go.Scatterpolar(
-                    r = circle_r,
-                    theta = circle,
-                    mode = 'lines',
-                    #hoverinfo='skip',
-                    line_color = 'green',
-                    #hoverinfo=None,
-                    hoverinfo='skip',
-                    showlegend = False
-                ))
-            a=str(np.sum(r_cord))
+#         theta =np.linspace(90,450,13)
+#         theta=theta[0:12]
+#         selected_points={}
+#         with col1:
+#             fig = go.Figure()
+#             circle=np.linspace(0,360,60)
+#             circle_r=np.empty(len(circle))
+#             circle_r.fill(0.1)
+#             marker_size=r_cord/np.linalg.norm(r_cord)
+#             marker_size=marker_size*100
+#             fig.add_trace(go.Scatterpolar(
+#                     r = circle_r,
+#                     theta = circle,
+#                     mode = 'lines',
+#                     #hoverinfo='skip',
+#                     line_color = 'green',
+#                     #hoverinfo=None,
+#                     hoverinfo='skip',
+#                     showlegend = False
+#                 ))
+#             a=str(np.sum(r_cord))
 
-            fig.add_trace(go.Barpolar(
-                r=r_cord,
-                theta=theta,
-                width=[1,1,1,1,1,1,1,1,1,1,1,1,],
-                #marker_color=["#E4FF87", '#709BFF', '#709BFF', '#FFAA70', '#FFAA70', '#FFDF70', '#B6FFB4'],
-                marker_line_color="green",
-                text=['January','February','March','April', 'May','June', 'July','August', 'September','October','November','December' ],
-                marker_line_width=1,
-                opacity=0.8,
-                #text=r_cord,
-                #hoverinfo='text',
-                hovertemplate ='Total no of cases<br>%{r:.2f}'
+#             fig.add_trace(go.Barpolar(
+#                 r=r_cord,
+#                 theta=theta,
+#                 width=[1,1,1,1,1,1,1,1,1,1,1,1,],
+#                 #marker_color=["#E4FF87", '#709BFF', '#709BFF', '#FFAA70', '#FFAA70', '#FFDF70', '#B6FFB4'],
+#                 marker_line_color="green",
+#                 text=['January','February','March','April', 'May','June', 'July','August', 'September','October','November','December' ],
+#                 marker_line_width=1,
+#                 opacity=0.8,
+#                 #text=r_cord,
+#                 #hoverinfo='text',
+#                 hovertemplate ='Total no of cases<br>%{r:.2f}'
 
-            )
-            )
-            fig.add_trace(go.Scatterpolar(
-                r=[5,5,5,5,5,5,5,5,5,5,5,5],
-                theta=theta,
-                mode='markers + text',
-                text=['January','February','March','April', 'May','June', 'July','August', 'September','October','November','December' ],
-                fillcolor='green',
-                marker_size=marker_size,
-                customdata = [[NEW[i],r_cord[i]] for i in range(len(r_cord))],
-                #name=r_cord,
-                textposition="middle center",
-                #hoverinfo='name',
-                hovertemplate= '%{customdata[0]}<br>Total no of cases:<br>%{customdata[1]:.3f}'
-            ))
+#             )
+#             )
+#             fig.add_trace(go.Scatterpolar(
+#                 r=[5,5,5,5,5,5,5,5,5,5,5,5],
+#                 theta=theta,
+#                 mode='markers + text',
+#                 text=['January','February','March','April', 'May','June', 'July','August', 'September','October','November','December' ],
+#                 fillcolor='green',
+#                 marker_size=marker_size,
+#                 customdata = [[NEW[i],r_cord[i]] for i in range(len(r_cord))],
+#                 #name=r_cord,
+#                 textposition="middle center",
+#                 #hoverinfo='name',
+#                 hovertemplate= '%{customdata[0]}<br>Total no of cases:<br>%{customdata[1]:.3f}'
+#             ))
 
-            fig.add_trace(go.Scatterpolar(
-                r=r_cord,
-                theta=theta,
-                mode='markers',
-                fillcolor='green',
-                marker_size=r_cord
-            ))
+#             fig.add_trace(go.Scatterpolar(
+#                 r=r_cord,
+#                 theta=theta,
+#                 mode='markers',
+#                 fillcolor='green',
+#                 marker_size=r_cord
+#             ))
 
-            fig.update_layout(showlegend=False,
-                template=None,
-                polar = dict(
-                    radialaxis = dict(range=[-4, 5], showline=False, showgrid=False,showticklabels=False, ticks=''),
-                    angularaxis = dict(showline=False,showticklabels=False, showgrid=False, ticks='')
-                )
-            )
+#             fig.update_layout(showlegend=False,
+#                 template=None,
+#                 polar = dict(
+#                     radialaxis = dict(range=[-4, 5], showline=False, showgrid=False,showticklabels=False, ticks=''),
+#                     angularaxis = dict(showline=False,showticklabels=False, showgrid=False, ticks='')
+#                 )
+#             )
 
-            selected_points = plotly_events(fig)
+#             selected_points = plotly_events(fig)
 
-        month='All'
-        if len(selected_points)!=0:
-            month=selected_points[0]['pointNumber']
-            month=NEW[month]
-            data2=data1[data1['month']==month]
-        else:
-            data2=data1
+#         month='All'
+#         if len(selected_points)!=0:
+#             month=selected_points[0]['pointNumber']
+#             month=NEW[month]
+#             data2=data1[data1['month']==month]
+#         else:
+#             data2=data1
 
-        df  = data2.groupby(["variant_grouped"])["num_sequences"].sum().reset_index()
-        df=df.rename(columns={"variant_grouped":"Variants", "num_sequences":"Total No. of cases"})
-        df=df.sort_values(by=['Variants'],ascending=True)
-        with col2:
-            fig2= px.bar(df, x="Total No. of cases", y="Variants", orientation='h', color="Variants")
-            fig2
+#         df  = data2.groupby(["variant_grouped"])["num_sequences"].sum().reset_index()
+#         df=df.rename(columns={"variant_grouped":"Variants", "num_sequences":"Total No. of cases"})
+#         df=df.sort_values(by=['Variants'],ascending=True)
+#         with col2:
+#             fig2= px.bar(df, x="Total No. of cases", y="Variants", orientation='h', color="Variants")
+#             fig2
 
-        #st.write("The first plot represents total number of ")
+#         #st.write("The first plot represents total number of ")
 
 
-        if month!='All':
-            st.write("#### Month chosen: "+ month)
+#         if month!='All':
+#             st.write("#### Month chosen: "+ month)
 
-        st.write("The first visualization encodes the number of covid cases in each month through the marker size. "
-        "For quantitative understanding, the values are given in the hover table as well. The second visualization "
-        "is a representation of the covid cases during the time period (year/month if selected) by variants. ")
-        st.write("Given below is also the data table for covid cases in each month." )
-        Cases
+#         st.write("The first visualization encodes the number of covid cases in each month through the marker size. "
+#         "For quantitative understanding, the values are given in the hover table as well. The second visualization "
+#         "is a representation of the covid cases during the time period (year/month if selected) by variants. ")
+#         st.write("Given below is also the data table for covid cases in each month." )
+#         Cases
 
 
 
