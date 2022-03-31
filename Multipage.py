@@ -128,9 +128,6 @@ class Page2(Page):
         st.write("This tool will enable users to quickly visualize COVID-19 global evolution, "
         "track the development of the virus and its variants and measure the correlation "
         "between the development of a country and the number of COVID-19 cases.")
-        #st.write("This tool will enable users to quickly visualize COVID-19 global evolution, "
-        "track the development of the virus and its variants and measure the correlation "
-        "between the development of a country and the number of COVID-19 cases."
         #st.write("##### For viewing the Sourcecode, click here:", linkedinlink)
 
 
