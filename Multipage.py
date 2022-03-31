@@ -113,7 +113,8 @@ class About(Page):
         st.write("##### 3: Monthly covid evolution")
         st.write("Here, we have a monthly view of how covid spread by location "
         "and variants ")
-        st.write("###### We have taken the covid data from", covidlink)
+        st.write("###### We have taken the covid data from", covidlink,"(1), ", GDPCovid, "(2) and ",bubbleCovid)
+
 
 
 
@@ -195,10 +196,10 @@ class Page2(Page):
         #Output rankings based on users selections
         st.write(
             """
-            ## Overview of the Variants
+            ## Overview of the Variants :chart_with_upwards_trend:
             """
         )
-        
+
         def block1(data):
 
           def total_cases(data, click):
@@ -221,7 +222,7 @@ class Page2(Page):
                     title=None),
                 color=alt.Color('Variant:N',
                     scale=alt.Scale(scheme='category20c')),
-                tooltip = [alt.Tooltip('Variant:N'),alt.Tooltip('Cases:Q')],
+                tooltip = [alt.Tooltip('Variant:N'),alt.Tooltip('sum(Total Cases):Q')],
                 opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))).add_selection(
                 click
             )
@@ -248,11 +249,11 @@ class Page2(Page):
                 line=True).properties(
                 title='Cumulative Cases by Variant over time').encode(
                 x=alt.X("date:T",
-                    title=None),
+                    title="Time Horizon",),
                 y=alt.Y("Cumulative Cases:Q"),
                 color=alt.Color('Variant:N',
                     scale=alt.Scale(scheme='category20c')),
-                tooltip = [alt.Tooltip('Variant:N'),alt.Tooltip('Cases:Q')],
+                tooltip = [alt.Tooltip('Variant:N'),alt.Tooltip('Cumulative Cases:Q')],
                 opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))).add_selection(
                 click
             )
@@ -278,7 +279,7 @@ class Page2(Page):
               interpolate='basis',
               line=True).properties(
               title='Cases by Variant over time').encode(
-              x=alt.X("date:T", title=None),
+              x=alt.X("date:T", title="Time Horizon",),
               y=alt.Y("Cases:Q", stack=None),
               color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c')),
               tooltip = [alt.Tooltip('Variant:N'),alt.Tooltip('Cases:Q')],
@@ -326,11 +327,6 @@ class Page2(Page):
 
 
         #################
-        data['year']=pd.DatetimeIndex(data['date']).year
-        data['month']=pd.DatetimeIndex(data['date']).month
-
-
-        st.write("""#### Cases by Variant Over Time  :chart_with_upwards_trend: """)
 
         # Disable default datapoints limit in Altair
         alt.data_transformers.disable_max_rows()
@@ -581,19 +577,22 @@ class Page4(Page):
         Cases
 
 
-      
+
 
 
 def main():
     """A streamlit app template"""
 
-    st.sidebar.title("Navigation")
 
+    col_side_1, col_side_1, = st.columns((2,1))
+    image = Image.open('covid_cell.jpeg')
+    st.sidebar.image(image)
+    st.sidebar.title("Navigation")
     PAGES = {
         "About the app": About,
         "Covid by Variants": Page2,
-        "Evolution of Covid": Page3,
-        "Greshma": Page4,
+        "Covid in a Geographical Context": Page3,
+        "Overall Development": Page4,
 
     }
 
