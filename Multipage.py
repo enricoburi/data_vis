@@ -86,8 +86,8 @@ class About(Page):
         st.write(emoji.emojize("""# :microbe: COVID-19 PandeMap :microbe:"""))
         st.write("""## How it works""")
         st.write("This tool will enable users to quickly visualize COVID-19 global evolution, "
-         "track the development of the virus and its variants and measure the correlation "
-         "between the development of a country and the number of COVID-19 cases.")
+        "track the development of the virus and its variants and measure the correlation "
+        "between the development of a country and the number of COVID-19 cases.")
         st.write("##### For viewing the Sourcecode, click here:", linkedinlink)
         st.write("""## Navigating the app""")
         st.write("The app consists of 4 pages, including this introduction page. "
@@ -115,8 +115,8 @@ class Page2(Page):
         st.write(emoji.emojize("""# :microbe: COVID-19 - A study by variants:"""))
         #st.write("""## How it works""")
         #st.write("This tool will enable users to quickly visualize COVID-19 global evolution, "
-         "track the development of the virus and its variants and measure the correlation "
-         "between the development of a country and the number of COVID-19 cases.")
+        "track the development of the virus and its variants and measure the correlation "
+        "between the development of a country and the number of COVID-19 cases."
         #st.write("##### For viewing the Sourcecode, click here:", linkedinlink)
 
 
