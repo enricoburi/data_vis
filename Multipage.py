@@ -15,11 +15,9 @@ import plotly.io as pio
 import plotly.graph_objects as go
 import plotly.express as px
 import math
-
 from ctypes import sizeof
 from genericpath import exists
 from pickle import TRUE
-#from turtle import color, fillcolor
 from streamlit_plotly_events import plotly_events
 
 linkedinlink = '[Github](https://github.com/patrickld/data_vis/)'
