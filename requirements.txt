@@ -1,9 +1,3 @@
-# Use to pip to install required python packages
-
-# cd to the directory where requirements.txt is located.
-# activate your virtualenv.
-# run pip install -r requirements.txt in your shell
-
 altair==4.2.0
 DateTimeRange==1.2.0
 emoji==1.7.0
