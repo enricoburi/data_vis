@@ -3,7 +3,7 @@ DateTimeRange==1.2.0
 emoji==1.7.0
 matplotlib==3.5.1
 numpy==1.20.3
-pandas==1.4.0
+pandas==1.2.4
 Pillow==9.0.1
 plotly==5.5.0
 protobuf==3.19.4
