@@ -194,12 +194,13 @@ class Page2(Page):
             ## Overview of the Variants
             """
         )
-        def page123(data):
+        
+        def block1(data):
 
-          def graph1(data, click):
+          def total_cases(data, click):
             '''
             Expects data.csv or its subsets as input
-            Returns the horizontal bar chart showing the total case by variant
+            Returns the horizontal bar chart showing the total cases by variant
             '''
 
             #Data manipulation: simple sum of cases by variant
@@ -208,11 +209,11 @@ class Page2(Page):
 
             graph = alt.Chart(total_sum_variant).mark_bar(
                 opacity=0.7).properties(
-                width=880,
                 title='Total Cases by Variant').encode(
                 x=alt.X('sum(Total Cases):Q',
-                    title="Total Cases"),
-                y=alt.Y('Variant:N',sort='-x',
+                    title="Total Cases (log scale)",
+                    scale=alt.Scale(type="log")),
+                y=alt.Y('Variant:N',
                     title=None),
                 color=alt.Color('Variant:N',
                     scale=alt.Scale(scheme='category20c')),
@@ -223,7 +224,7 @@ class Page2(Page):
 
             return graph
 
-          def graph2(data, click):
+          def cum_cases(data, click):
             '''
             Expects data.csv or its subsets as input
             Returns the graph showing cumulative cases by variant over time
@@ -254,7 +255,7 @@ class Page2(Page):
 
             return graph
 
-          def graph3(data, click):
+          def waves(data, click):
             '''
             Expects data.csv or its subsets as input
             Returns the graph showing cumulative cases by variant over time
@@ -283,7 +284,7 @@ class Page2(Page):
 
             return graph
 
-          def graph3_2(data, click):
+          def cases_countries(data, click):
             '''
             Expects data.csv or its subsets as input
             Returns the graph showing cumulative cases by variant over time
@@ -291,7 +292,7 @@ class Page2(Page):
 
             # Data manipulation: cumulative counts of cases by date and variant
             variantsum = data.groupby(["variant_grouped", "Country"])["num_sequences"].sum().reset_index()
-            variantsum.columns = ["Variant", "Country", "Cumulative Cases"]
+            variantsum.columns = ["Variant", "Country", "Total Cases"]
 
             # Define interaction
             #click = alt.selection_single(encodings=['color'], on="mouseover")
@@ -302,10 +303,10 @@ class Page2(Page):
               interpolate='basis',
               line=True).properties(
               title='Cases by Variant').encode(
-              x=alt.X('Cumulative Cases:Q', stack = 'normalize'),
+              x=alt.X('Total Cases:Q', stack = 'normalize'),
               y=alt.Y("Country:N", title=None),
-              color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c'),legend=alt.Legend(title="Variants by color")),
-              tooltip = [alt.Tooltip('Country:N'),alt.Tooltip('Cumulative Cases:Q')],
+              color=alt.Color('Variant:N', scale=alt.Scale(scheme='category20c'),legend=alt.Legend(title="Variants")),
+              tooltip = [alt.Tooltip('Country:N'), alt.Tooltip('Variant:N'), alt.Tooltip('Total Cases:Q')],
               opacity = alt.condition(click, alt.value(0.9), alt.value(0.1))
             ).add_selection(
               click
@@ -315,9 +316,9 @@ class Page2(Page):
 
           click = alt.selection_single(encodings=['color'], on="mouseover", resolve="global")
 
-          return graph1(data,click) & (graph2(data, click) | graph3(data, click) & graph3_2(data, click))
+          return (total_cases(data,click) & (waves(data, click) & cum_cases(data, click)) | cases_countries(data, click))
 
-        st.altair_chart(page123(data1))
+        st.altair_chart(block1(data1))
 
 
         #################
