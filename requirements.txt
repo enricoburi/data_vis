@@ -1,0 +1,17 @@
+# Use to pip to install required python packages
+
+# cd to the directory where requirements.txt is located.
+# activate your virtualenv.
+# run pip install -r requirements.txt in your shell
+
+altair==4.2.0
+DateTimeRange==1.2.0
+emoji==1.7.0
+matplotlib==3.5.1
+numpy==1.20.3
+pandas==1.4.1
+Pillow==9.0.1
+plotly==5.5.0
+protobuf==3.19.4
+seaborn==0.11.2
+streamlit_plotly_events==0.0.6

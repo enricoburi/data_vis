@@ -17,6 +17,8 @@ import math
 
 linkedinlink = '[Github](https://github.com/patrickld/data_vis/)'
 covidlink='[Kaggle](https://www.kaggle.com/datasets/yamqwe/omicron-covid19-variant-daily-cases?select=covid-variants.csv)'
+bubbleCovid = '[opendata.ecdc.europa.eu](https://opendata.ecdc.europa.eu/covid19/casedistribution/csv)'
+GDPCovid = '[Kaggle](https://www.kaggle.com/code/thejeswar/gdp-population-analysis-of-the-world-countries/notebook)'
 
 st.set_page_config(
     page_title="A Dashboard Template",
@@ -106,6 +108,8 @@ class About(Page):
         "and variants ")
         st.write("###### We have taken the covid data from", covidlink)
 
+
+
 class Page2(Page):
     def __init__(self, data, **kwargs):
         name = "Page2"
@@ -114,9 +118,9 @@ class Page2(Page):
         #Create header
         st.write(emoji.emojize("""# :microbe: COVID-19 - A study by variants:"""))
         #st.write("""## How it works""")
-        #st.write("This tool will enable users to quickly visualize COVID-19 global evolution, "
-         "track the development of the virus and its variants and measure the correlation "
-         "between the development of a country and the number of COVID-19 cases.")
+        st.write("This tool will enable users to quickly visualize COVID-19 global evolution, "
+        "track the development of the virus and its variants and measure the correlation "
+        "between the development of a country and the number of COVID-19 cases.")
         #st.write("##### For viewing the Sourcecode, click here:", linkedinlink)
 
 
@@ -339,7 +343,7 @@ class Page3(Page):
         st.write(emoji.emojize("""## :microbe: Dynamic World Map & GDP vs Infant Mortality Index :microbe:"""))
 
         st.write("""This section features the lates COVID-19 data from a global and economical perspective: the first visalisation will provide a
-        overview of the evlution of Covid cases across the globe, whil the second one will compare the GDP vs Infant Mortality index, an insightful index for the health status of a country, to the number of
+        overview of the evolution of Covid cases across the globe, while the second one will compare the GDP vs Infant Mortality index, an insightful index for the health status of a country, to the number of
         Covid cases in that country.""")
 
         # Importing first plot
@@ -347,7 +351,9 @@ class Page3(Page):
 
         #st.write("""##### The dataset used:""")
         df = pd.read_csv('cases_evolution.csv', index_col=0)
-        df
+        #df
+        st.write("###### Additional data for these insights was taken from", bubbleCovid, "and", GDPCovid )
+
 
 
 
@@ -367,10 +373,10 @@ class Page3(Page):
 
         st.write("""#### GDP :moneybag: vs Infant Mortality  :baby_bottle: & Total Cases""")
 
-        st.write("""##### The dataset used:""")
-        # Importing GDP vs Infant mortality dataframe
+        #st.write("""##### The dataset used:""")
+        ## Importing GDP vs Infant mortality dataframe
         data = pd.read_csv('data_gdp.csv', index_col=0)
-        data
+        #data
 
         # Plot 2
         bubble_fig = px.scatter(data, x='Infant mortality (per 1000 births)',
@@ -387,6 +393,9 @@ class Page3(Page):
         st.plotly_chart(bubble_fig)
         # hovertemplaye=None
         # hovermode="x unified"
+
+
+      
 
 
 def main():
