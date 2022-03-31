@@ -24,7 +24,7 @@ from streamlit_plotly_events import plotly_events
 import math
 
 
-data = pd.read_csv('/Users/greshmababu/Downloads/data.csv')
+data = pd.read_csv('data.csv')
 data=data.drop(["Unnamed: 0","Climate"], axis=1)
 def date_change(date_str):
             format_str = '%Y-%m-%d' # The format
