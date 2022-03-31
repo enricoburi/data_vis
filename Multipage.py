@@ -345,7 +345,7 @@ class Page3(Page):
         # Importing first plot
         st.write("""#### World COVID-19 Cases - Evolution Over Time :earth_africa: """)
 
-        st.write("""##### The dataset used:""")
+        #st.write("""##### The dataset used:""")
         df = pd.read_csv('cases_evolution.csv', index_col=0)
         df
 
