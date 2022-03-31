@@ -175,10 +175,10 @@ class Page2(Page):
         if all_data_textbox == True:
             st.write("All Data is chosen")
         else:
-            "Timeframe: " +str(time_1) + " to " + str(time_2)
+            st.write("Timeframe: " +str(time_1) + " to " + str(time_2))
             str_val = ", ".join(variant_filter)
-            "Chosen Variants: " + str(str_val)
-            "Chosen country: " + str(country_filter)
+            st.write("Chosen Variants: " + str(str_val))
+            st.write("Chosen country: " + str(country_filter))
 
 
         #Output rankings based on users selections
