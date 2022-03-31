@@ -97,13 +97,13 @@ class About(Page):
         st.write("The first page is a view of the covid spread by variants. We can "
         "compare covid spreads in different locations at different times at the "
         "variant level of granularity ")
-        st.write("##### 2: Evolution of Covid")
+        st.write("##### 2: How Covid Spread")
         st.write("In the second page, we go deeper into understanding the spread of covid. "
         "We see the evolution of covid over time and also, make a comparison of regions by GDP "
         "and infant mortalities and covid cases to see if there is some trend that is observable. ")
-        st.write("##### 3: Future works")
-        st.write("Here, we discuss what future visualization we would have liked to do, to "
-        "improve our visualization app. ")
+        st.write("##### 3: Monthly covid evolution")
+        st.write("Here, we have a monthly view of how covid spread by location "
+        "and variants ")
         st.write("###### We have taken the covid data from", covidlink)
 
 class Page2(Page):
@@ -112,17 +112,17 @@ class Page2(Page):
         super().__init__(name, data, **kwargs)
     def content(self):
         #Create header
-        st.write(emoji.emojize("""# :microbe: COVID-19 PandeMap :microbe:"""))
-        st.write("""## How it works""")
-        st.write("This tool will enable users to quickly visualize COVID-19 global evolution, "
+        st.write(emoji.emojize("""# :microbe: COVID-19 - A study by variants:"""))
+        #st.write("""## How it works""")
+        #st.write("This tool will enable users to quickly visualize COVID-19 global evolution, "
          "track the development of the virus and its variants and measure the correlation "
          "between the development of a country and the number of COVID-19 cases.")
-        st.write("##### For viewing the Sourcecode, click here:", linkedinlink)
+        #st.write("##### For viewing the Sourcecode, click here:", linkedinlink)
 
 
         #Bring in the data
         data = pd.read_csv('data.csv')
-        st.write("## THE DATA BEING USED")
+        #st.write("## THE DATA BEING USED")
         data=data.drop(["Unnamed: 0","Climate"], axis=1)
 
         #Transformation of Date column
