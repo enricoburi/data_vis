@@ -431,10 +431,11 @@ class Page4(Page):
         st.write(emoji.emojize("""# :microbe: COVID-19 Cases by month:"""))
         st.write("This interactive plot gives an overview of the monthly trends in covid evolution. "
         "The filters on the left give the option of choosing the year, region and variant we wish "
-        "to study. On choosing any of the filters, both the plots will adjust accordingly. ")
+        "to study. On choosing any of the filters, the plot will adjust accordingly. ")
 
-        st.write("""### Click on any of the months on the first visualization to see the variant distribution """
-        "of the total cases in that month. """)
+        #st.write("""### Click on any of the months on the first visualization to see the variant distribution """
+        #"of the total cases in that month. """)
+        
         data['year']=pd.DatetimeIndex(data['date']).year
         data['month']=pd.DatetimeIndex(data['date']).month
         data['month']=pd.to_datetime(data['month'], format='%m').dt.month_name()
@@ -568,10 +569,12 @@ class Page4(Page):
         if month!='All':
             st.write("#### Month chosen: "+ month)
 
-        st.write("The first visualization encodes the number of covid cases in each month through the marker size. "
-        "For quantitative understanding, the values are given in the hover table as well. The second visualization "
-        "is a representation of the covid cases during the time period (year/month if selected) by variants. ")
-        st.write("Given below is also the data table for covid cases in each month." )
+        st.write("The visualization encodes the number of covid cases in each month through the marker size. "
+        "For quantitative understanding, the values are given in the hover table as well. Ideally, we had a second visualization "
+        "Which was a representation of the covid cases during the time period (year or if selected, month) by variants. We had meant"
+        "the first representation to also act as a filter. However, while compiling all our pages together, this hasn't worked."
+        "And so, this is the work we would hope to accomplish as future work.")
+        #st.write("Given below is also the data table for covid cases in each month." )
         Cases
 
 
